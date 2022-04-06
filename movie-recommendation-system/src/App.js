@@ -1,21 +1,19 @@
-import "./App.css";
-import styled from "styled-components";
-import { AccountBox } from "./components/accountBox";
-
-const AppContainer = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-`;
+import { Main } from "./Main";
+import { Login } from "./Login";
+import { useContext } from 'react'
+import AuthContext, { AuthProvider } from "./context/AuthProvider";
 
 function App() {
+  const { setAuth } = useContext(AuthContext)
+  console.log(setAuth)
+  //{setAuth === false ? (<Login />) : (<Main />)}
+
   return (
-    <AppContainer>
-      <AccountBox />
-    </AppContainer>
+      <AuthProvider>
+        <Login/>
+      </AuthProvider>
+    //if auth token is set route to Main
+    // else route to login
   );
 }
 

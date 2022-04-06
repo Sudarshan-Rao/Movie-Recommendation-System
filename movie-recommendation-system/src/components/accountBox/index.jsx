@@ -4,6 +4,7 @@ import { LoginForm } from "./loginForm";
 import { motion } from "framer-motion";
 import { AccountContext } from "./accountContext";
 import { SignupForm } from "./signupForm";
+import img from '../../images/Purdue.png';
 
 const BoxContainer = styled.div`
   width: 280px;
@@ -51,6 +52,19 @@ const HeaderContainer = styled.div`
   flex-direction: column;
 `;
 
+const Logo = styled.div`
+  width: 120px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-image: url(${img});
+  background-size: contain; /* or contain depending on what you want */
+  background-position: right;
+  background-repeat: no-repeat;
+  z-index: 10;
+`;
+  
 const HeaderText = styled.h2`
   font-size: 30px;
   font-weight: 600;
@@ -136,15 +150,13 @@ export function AccountBox(props) {
           />
           {active === "signin" && (
             <HeaderContainer>
-              <HeaderText>Welcome</HeaderText>
-              <HeaderText>Back</HeaderText>
+              <Logo></Logo>
               <SmallText>Please sign-in to continue!</SmallText>
             </HeaderContainer>
           )}
           {active === "signup" && (
             <HeaderContainer>
-              <HeaderText>Create</HeaderText>
-              <HeaderText>Account</HeaderText>
+              <Logo></Logo>
               <SmallText>Please sign-up to continue!</SmallText>
             </HeaderContainer>
           )}
