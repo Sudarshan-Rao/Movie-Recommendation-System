@@ -14,7 +14,7 @@ import {
   import axios from '../../api/axios';
   import { Navigate } from 'react-router-dom';
 
-const LOGIN_URL = '/users';
+const LOGIN_URL = '/login';
 
 export function LoginForm(props) {
     const { switchToSignup } = useContext(AccountContext);
@@ -40,21 +40,28 @@ export function LoginForm(props) {
 
         try {
             const response = await axios.post(LOGIN_URL,
-                JSON.stringify({ email, pwd }),
+                JSON.stringify({ "email":email, "password":pwd }),
                 {
                     headers: { 'Content-Type': 'application/json' },
                     withCredentials: true
                 }
             );
             console.log(JSON.stringify(response?.data));
-            //console.log(JSON.stringify(response));
-            setAuth(true);
             setEmail('');
             setPwd('');
-            setSuccess(true);
+
+            if (JSON.stringify(response?.data?.login_status_flag)==='1') {
+                console.log(JSON.stringify(response?.data?.login_status_flag));
+                setSuccess(true);
+                <Navigate to='/main' />
+            }else{
+
+                    throw new Error();
+            }
         } catch (err) {
+            setErrMsg('Login Failed, Unauthorized User');
             if (!err?.response) {
-                setErrMsg('No Server Response');
+                setErrMsg('Login Failed: Unauthorized User');
             } else if (err.response?.status === 400) {
                 setErrMsg('Missing Username or Password');
             } else if (err.response?.status === 401) {
@@ -97,7 +104,6 @@ export function LoginForm(props) {
                     </FormContainer>
 
                         <Marginer direction="vertical" margin={10} />
-                        <MutedLink href="#">Forget your password?</MutedLink>
                         <Marginer direction="vertical" margin="1.6em" />
                         <SubmitButton type="submit" form="signin" >SignIn</SubmitButton>
                         <Marginer direction="vertical" margin="1em" />

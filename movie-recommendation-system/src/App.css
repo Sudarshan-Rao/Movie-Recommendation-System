@@ -129,6 +129,7 @@ h1 {
 
 .search {
     border: 1px solid darkslategray;
+    margin-top: 20px;
     outline: transparent;
     background-color: transparent;
     padding: 5px 10px;

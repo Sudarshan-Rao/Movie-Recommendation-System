@@ -13,21 +13,17 @@ import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icon
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRef, useState, useEffect } from "react";
 import axios from '../../api/axios';
+import { Navigate } from 'react-router-dom';
 
-const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
 const EMAIL_REGEX = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
-const REGISTER_URL = '/users';
+const REGISTER_URL = '/register';
 
 export function SignupForm(props){
     const { switchToSignin } = useContext(AccountContext);
 
-    const userRef = useRef();
+    const emailRef = useRef();
     const errRef = useRef();
-
-    const [user, setUser] = useState('');
-    const [validName, setValidName] = useState(false);
-    const [userFocus, setUserFocus] = useState(false);
 
     const [email, setEmail] = useState('');
     const [validEmail, setValidEmail] = useState(false);
@@ -45,12 +41,8 @@ export function SignupForm(props){
     const [success, setSuccess] = useState(false);
 
     useEffect(() => {
-        userRef.current.focus();
+        emailRef.current.focus();
     }, [])
-
-    useEffect(() => {
-        setValidName(USER_REGEX.test(user));
-    }, [user])
 
     useEffect(() => {
         setValidEmail(EMAIL_REGEX.test(email));
@@ -63,21 +55,20 @@ export function SignupForm(props){
 
     useEffect(() => {
         setErrMsg('');
-    }, [user, email, pwd, matchPwd])
+    }, [email, pwd, matchPwd])
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         // if button enabled with JS hack
-        const v1 = USER_REGEX.test(user);
         const v2 = PWD_REGEX.test(pwd);
         const v3 = EMAIL_REGEX.test(email);
-        if (!v1 || !v2 || !v3) {
+        if ( !v2 || !v3) {
             setErrMsg("Invalid Entry");
             return;
         }
         try {
             const response = await axios.post(REGISTER_URL,
-                JSON.stringify({ email, pwd }),
+                JSON.stringify({ "email":email, "password":pwd }),
                 {
                     headers: { 'Content-Type': 'application/json' },
                     withCredentials: true
@@ -88,7 +79,6 @@ export function SignupForm(props){
             //console.log(JSON.stringify(response))
             setSuccess(true);
             //clear state and controlled inputs
-            setUser('');
             setEmail('');
             setPwd('');
             setMatchPwd('');
@@ -108,6 +98,7 @@ export function SignupForm(props){
         <>
             {success ? (
                 <>
+                    <Navigate to='/login' />
                     <label>Successfully Registered. Please Sign In</label>
                     <BoldLink href="#" onClick={switchToSignin}>
                     Signin
@@ -119,31 +110,6 @@ export function SignupForm(props){
 
                     <FormContainer id="signup" onSubmit={handleSubmit}>
 
-                        <label htmlFor="user">
-                            User Name:
-                            <FontAwesomeIcon icon={faCheck} className={validName ? "valid" : "hide"} />
-                            <FontAwesomeIcon icon={faTimes} className={validName || !user ? "hide" : "invalid"} />
-                        </ label>
-
-                        <Input
-                            type="text"
-                            id="username"
-                            placeholder="UserName"
-                            ref={userRef}
-                            autoComplete="off"
-                            onChange={(e) => setUser(e.target.value)}
-                            value={user}
-                            required
-                            onFocus={() => setUserFocus(true)}
-                            onBlur={() => setUserFocus(false)}
-                        /> 
-
-                        <p id="uidnote" className={userFocus && user && !validName ? "instructions" : "offscreen"}>
-                            4 to 24 characters.<br />
-                            Must begin with a letter.<br />
-                            Letters, numbers, underscores, hyphens allowed.
-                        </p>
-
                         <label htmlFor="email">
                             Email:
                             <FontAwesomeIcon icon={faCheck} className={validEmail ? "valid" : "hide"} />
@@ -154,6 +120,7 @@ export function SignupForm(props){
                             type="email" 
                             id="email"
                             placeholder="Email" 
+                            ref={emailRef}
                             autoComplete="off"
                             onChange={(e) => setEmail(e.target.value)}
                             value={email}
@@ -215,7 +182,7 @@ export function SignupForm(props){
                         </p>
                     </FormContainer>
                     <Marginer direction="vertical" margin="1em" />
-                    <SubmitButton disabled={!validName || !validPwd || !validMatch ? true : false} type="submit" form="signup" >Signup</SubmitButton>
+                    <SubmitButton disabled={!validPwd || !validMatch ? true : false} type="submit" form="signup" >Signup</SubmitButton>
                         <MutedLink href="#">
                             Already have an account?
                             <BoldLink href="#" onClick={switchToSignin}>

@@ -3,8 +3,23 @@ import axios from 'axios'
 import { Movie } from "./components/Movie"
 import './App.css'
 import ReactStars from "react-rating-stars-component";
+import img from './images/Purdue.png';
+import styled from "styled-components";
 
 export function Main(props) {
+    const Logo = styled.div`
+    width: 80px;
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-image: url(${img});
+    background-size: contain; /* or contain depending on what you want */
+    background-position: right;
+    background-repeat: no-repeat;
+    z-index: 10;
+    `;
+
     const MOVIE_API = "https://api.themoviedb.org/3/"
     const SEARCH_API = MOVIE_API + "search/movie"
     const DISCOVER_API = MOVIE_API + "discover/movie"
@@ -16,9 +31,11 @@ export function Main(props) {
     const [movies, setMovies] = useState([])
     const [searchKey, setSearchKey] = useState("")
     const [movie, setMovie] = useState({title: "Loading Movies"})
+    const [rating, setRating] =  useState();
 
     const ratingChanged = (newRating) => {
         console.log(newRating);
+        setRating(newRating)
       };
 
     useEffect(() => {
@@ -37,12 +54,12 @@ export function Main(props) {
             }
         })
 
-        console.log(data.results[0])
+        console.log(data.results[4])
         setMovies(data.results)
-        setMovie(data.results[0])
+        setMovie(data.results[4])
 
         if (data.results.length) {
-            await fetchMovie(data.results[0].id)
+            await fetchMovie(data.results[4].id)
         }
     }
 
@@ -83,9 +100,10 @@ export function Main(props) {
     return (
         <div className="App">
             <header className="center-max-size header"style={{background: `linear-gradient(58deg,rgba(241, 196, 15, 1) 20%, rgba(243, 172, 18, 1) 100%)`}}>
-                <span className={"brand"}>Movie Recommendation System</span>
+            <Logo></Logo>
+                <span className={"brand"}><h2>Movie Recommendation System</h2></span>
                 <form className="form" onSubmit={fetchMovies}>
-                    <input className="search" type="text" id="search"
+                    <input className="search" type="text" id="search" placeholder="Search Movies"
                            onInput={(event) => setSearchKey(event.target.value)}/>
                     <button className="submit-search" type="submit"><i className="fa fa-search"></i></button>
                 </form>
@@ -106,7 +124,8 @@ export function Main(props) {
                                         <p>{movie.overview}</p>
                                         <ReactStars
                                             className="rating"
-                                            count={5}
+                                            count={10}
+                                            isHalf={true}
                                             onChange={ratingChanged}
                                             size={24}
                                             activeColor="#ffd700"
