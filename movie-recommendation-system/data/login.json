@@ -1,0 +1,19 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "sudarshanmvrao@gmail.com",
+      "pwd": "sudarshan@1"
+    },
+    {
+      "id": 2,
+      "email": "munds01@pfw.edu",
+      "pwd": "Friends@123"
+    },
+    {
+      "email": "millip@pfw.edu",
+      "pwd": "Pragna@123",
+      "id": 3
+    }
+  ]
+}
